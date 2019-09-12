@@ -64,13 +64,14 @@ class GroupService
             ->where('group_team.group_id', $id)
             ->selectRaw(
                 'teams.*, group_team.odd, group_team.id as rank,
-                (SELECT SUM(points) FROM members WHERE members.team_id = teams.id AND members.game_id IN (SELECT id FROM games WHERE round_id IN  (SELECT id FROM rounds WHERE group_id=?))) AS points,
-                (SELECT SUM(winner) FROM members WHERE members.team_id = teams.id AND members.game_id IN (SELECT id FROM games WHERE round_id IN  (SELECT id FROM rounds WHERE group_id=?))) AS winner,
+                (SELECT SUM(diff) FROM members WHERE members.team_id = teams.id AND members.game_id IN (SELECT id FROM games WHERE round_id IN  (SELECT id FROM rounds WHERE group_id=?))) AS points,
+                COALESCE((SELECT SUM(winner) FROM members WHERE members.team_id = teams.id AND members.game_id IN (SELECT id FROM games WHERE round_id IN  (SELECT id FROM rounds WHERE group_id=?))), 0) AS winner,
                 (SELECT sum(winner) from members where members.game_id in ((SELECT id FROM games WHERE round_id IN  (SELECT id FROM rounds WHERE group_id=?))) and members.team_id in 
                 (SELECT a.team_id FROM members a where a.game_id in (select game_id from members where members.team_id = teams.id AND members.game_id IN (SELECT id FROM games WHERE round_id IN  (SELECT id FROM rounds WHERE group_id=?))) AND members.team_id != teams.id)) as buhgolc',
                 [$id, $id, $id, $id]
 
             )
+            //(SELECT SUM(points) FROM members WHERE members.team_id = teams.id AND members.game_id IN (SELECT id FROM games WHERE round_id IN  (SELECT id FROM rounds WHERE group_id=?)))
             ->orderByDesc('winner')
             ->orderByDesc('buhgolc')
             ->orderByDesc('points')

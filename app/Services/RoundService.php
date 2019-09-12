@@ -12,27 +12,85 @@ use App\Team;
 
 class RoundService
 {
+    /**
+     * @param int $group_id
+     * @return mixed
+     */
     public function index(int $group_id)
     {
         //
         return Round::whereGroupId($group_id)->orderBy('number');
     }
 
-    public function create($group_id)
+    public function makeNextRound(Group $group)
     {
-        $group = Group::find($group_id);
+        throw_if(
+            $group->teams()->count() - 1 == $group->rounds()->count(),
+            new \Exception('Все уже наигрались')
+        );
         $round = $group->rounds()->get()->last();
         if ($round) {
             $round = Round::create([
                 'number' => $round->number + 1,
-                'group_id' => $group_id
+                'group_id' => $group->id
             ]);
         } else {
             $round = Round::create([
                 'number' => 1,
-                'group_id' => $group_id
+                'group_id' => $group->id
             ]);
         }
+        return $round;
+    }
+
+    public function create_v2($group_id)
+    {
+        $group = Group::find($group_id);
+        $round = $this->makeNextRound($group);
+        $gs = new GroupService();
+        $teams = $gs->rating($group_id)->get();
+        foreach ($teams as $team) {
+            $team->closed = false;
+        }
+        $wins = $teams[0]->winner;
+        $pools = collect();
+        while ($wins > -1) {
+            $pools->put($wins, $teams->where('winner', '=', $wins));
+            $wins--;
+        }
+        $wins = $teams[0]->winner;
+        $additional = collect();
+        $tracks = $group->event->tracks()->get();
+        while ($wins > -1) {
+            $next_pool = $pools->get($wins)->values();
+            if ($additional->count() < $next_pool->count() && $additional->count() != 0)
+            {
+                foreach ($additional as $add) {
+                    $this->create_game_v2($add, $next_pool, 0, $next_pool->count(), $group, $round, $tracks);
+                }
+                $additional = $additional->where('closed', '=', false);
+                throw_if($additional->count() > 0, new \Exception('Не удачный сдвиг'));
+                $next_pool = $next_pool->where('closed', '=', false);
+            }
+            $pool = $additional->merge($next_pool);
+            $half = (int)($pool->count() /2);
+            for ($i = 0; $i < $half; $i++)
+            {
+                $this->create_game_v2($pool[$i], $pool, $half, $pool->count(), $group, $round, $tracks);
+                if (!$pool[$i]->closed) { //тут копия предыдущего
+                    $this->create_game_v2($pool[$i], $pool, $i + 1, $half, $group, $round, $tracks); //тут возможно перебирать весь массив до середины
+                }
+            }
+            $additional = $pool->where('closed', '=', false);
+            $wins--;
+        }
+        return $round;
+    }
+
+    public function create($group_id)
+    {
+        $group = Group::find($group_id);
+        $round = $this->makeNextRound($group);
         $gs = new GroupService();
         $teams = $gs->rating($group_id)->get();
         foreach ($teams as $team) {
@@ -98,6 +156,26 @@ class RoundService
             }
         }
         return $round;
+    }
+
+    private function create_game_v2(&$first, &$second, $start, $end, $group, $round, &$tracks)
+    {
+        $ailibale_tracks = $tracks->whereNotIn('id', $this->used_tracks($first, $group));
+        $result = false;
+        $was = $this->was($first->id, $group->id);
+        for ($j = $start; $j < $end; $j++) { //Ниже в if копия кода
+            if (!$second[$j]->closed && !$was->contains($second[$j]->id)) {
+                $ailibale_tracks = $ailibale_tracks->whereNotIn('id', $this->used_tracks($second[$j], $group));
+                $track = $ailibale_tracks->isEmpty() ? $tracks->pop() : $ailibale_tracks->first();
+                $tracks = $tracks->filter(function ($value, $key) use ($track) {
+                    return $value->id != $track->id;
+                });
+                $this->create_game($first,$second[$j], $round->id, $track->id );
+                $result = true;
+                break;
+            }
+        }
+        return $result;
     }
 
     private function create_game(&$team_i, &$team_j, $round_id, $track_id)

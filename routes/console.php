@@ -22,9 +22,9 @@ Artisan::command('inspire', function () {
 })->describe('Display an inspiring quote');
 
 Artisan::command('test', function () {
-   //$s = new RoundService();
-   //$s->create(1);
+  $s = new RoundService();
+  $s->create_v2(8);
    // $s = new TeamService();
    // dd($s->renumber(14));
-    echo ceil(4 / 2);
+$a=1;
 })->describe('Test');

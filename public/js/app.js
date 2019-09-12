@@ -2469,9 +2469,13 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       if (parseInt(value.members[0].points) > parseInt(value.members[1].points)) {
         value.members[0].winner = true;
         value.members[1].winner = false;
+        value.members[0].diff = parseInt(value.members[0].points) - parseInt(value.members[1].points);
+        value.members[1].diff = -value.members[0].diff;
       } else if (parseInt(value.members[0].points) < parseInt(value.members[1].points)) {
         value.members[0].winner = false;
         value.members[1].winner = true;
+        value.members[1].diff = parseInt(value.members[1].points) - parseInt(value.members[0].points);
+        value.members[0].diff = -value.members[1].diff;
       } else {
         value.members[0].winner = null;
         value.members[1].winner = null;

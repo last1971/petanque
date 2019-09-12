@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Member extends Model
 {
     //
-    protected $fillable = [ 'game_id', 'team_id', 'points', 'winner' ];
+    protected $fillable = [ 'game_id', 'team_id', 'points', 'winner', 'diff' ];
 
     protected $casts = [ 'winner' => 'boolean' ];
 
