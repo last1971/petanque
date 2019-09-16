@@ -22,9 +22,46 @@ Artisan::command('inspire', function () {
 })->describe('Display an inspiring quote');
 
 Artisan::command('test', function () {
-  $s = new RoundService();
-  $s->create_v2(8);
+    //$a = collect([['id' => 4, 'name' => 22], ['id' => 1, 'name' => 2],['id' => 2, 'name' => 3], ['id' => 3, 'name' => 22] ]);
+    //$a->push($a->shift());
+    //dd($a);
+
+ $s = new RoundService();
+  dd($s->create_v3(50));
    // $s = new TeamService();
    // dd($s->renumber(14));
 $a=1;
 })->describe('Test');
+
+Artisan::command('e_test', function () {
+    $s1 = [ 1 ];
+    $s2 = [ 5 ];
+    $max_e = 1;
+    $next_e = 0;
+    $min_e = 0;
+    $other_e = 0;
+    $flag = true;
+    while (true) {
+        //
+        $e = $s1[$next_e];
+        $s1[$next_e] = $s2[$other_e];
+        $s2[$other_e] = $e;
+        //
+        if ($next_e == $min_e) {
+            $next_e = $max_e;
+            if ($max_e < count($s1) -1) {
+                $max_e++;
+            } else {
+                if ($flag) {
+                    $flag = false;
+                } else {
+                    $min_e++;
+                }
+            }
+            $other_e = $min_e;
+        } else {
+            $next_e--;
+            $other_e++;
+        }
+    }
+ })->describe('Display an inspiring quote');

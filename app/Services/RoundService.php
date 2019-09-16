@@ -43,6 +43,67 @@ class RoundService
         return $round;
     }
 
+    public function create_v3($group_id)
+    {
+        $group = Group::find($group_id);
+        $gs = new GroupService();
+        $teams = $gs->rating($group_id)->get();
+        $teams->each(function($value) use ($group_id) {
+            $value->old_pairs = $this->was($value->id, $group_id);
+        });
+        $wins = $teams[0]->winner;
+        $pools = collect();
+        while ($wins > -1) {
+            $pools->push(new Pool($teams->where('winner', '=', $wins), $wins));
+            $wins--;
+        }
+        //логика
+        $index = 0;
+        while ($index < $pools->count()) {
+            $pool = $pools->get($index);
+            if ($add = $pool->pairing()) {
+                $index++;
+                if ($add->count() > 1) {
+                    $new_pool = new Pool($add, $pool->get_wins());
+                    $pools->splice($index, 0, [$new_pool]);
+                } elseif ($add->count() == 1) {
+                    $pools->get($index)->set_additional_teams($add);
+                }
+            } else {
+                if ($index == $pools->count() - 1) {
+                    if (!$pools->get($index - 1)->shift_sub2()) dd('Гавно2');
+                    $index--;
+                } else {
+                    $pairs = collect();
+                    $pools->each(function ($pool, $i) use ($pairs) {
+                        $pool->get_pairs()->each(function ($pair) use ($pairs, $i) {
+                            $pairs->push([$pair[0]->name, $pair[1]->name, $i]);
+                        });
+                    });
+                    dd('Гавно', $pairs, $index, $pools->count() - 1);
+                }
+            }
+        }
+        //
+        $round = $this->makeNextRound($group);
+        $tracks = $group->event->tracks()->get();
+        $pools->each(function($value) use ($round, $group, $tracks) {
+            $value->get_pairs()->each(function($pair) use ($round, $group, $tracks) {
+                $first = $pair->first();
+                $last = $pair->last();
+                $ailibale_tracks = $tracks->whereNotIn('id', $this->used_tracks($first, $group));
+                $ailibale_tracks = $ailibale_tracks->whereNotIn('id', $this->used_tracks($last, $group));
+                $track = $ailibale_tracks->isEmpty() ? $tracks->pop() : $ailibale_tracks->first();
+                $tracks = $tracks->filter(function ($value, $key) use ($track) {
+                    return $value->id != $track->id;
+                });
+                $this->create_game($first, $last, $round->id, $track->id);
+            });
+        });
+
+        return $round;
+    }
+
     public function create_v2($group_id)
     {
         $group = Group::find($group_id);
@@ -208,9 +269,10 @@ class RoundService
             })
             ->selectRaw('(SELECT a.team_id FROM members a WHERE a.team_id != members.team_id AND a.game_id = members.game_id) as member_id')
             ->get()
-            ->map(function ($value, $key) {
-                return $value->member_id;
-            });
+            ->pluck('member_id');
+            //->map(function ($value, $key) {
+            //    return $value->member_id;
+            //});
     }
 
     private function used_tracks(Team $team, Group $group)
