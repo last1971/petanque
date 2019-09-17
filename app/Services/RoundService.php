@@ -71,16 +71,23 @@ class RoundService
                 }
             } else {
                 if ($index == $pools->count() - 1) {
-                    if (!$pools->get($index - 1)->shift_sub2()) dd('Гавно2');
+                    //if(!$pools->get($index - 1)->shift_sub2()) {
+                   //     throw_if(!$pools->get($index - 1)->exch_sub2(), new \Exception('Нужны обЪединять группы'));
+                   // }
+                    throw_if(!$pools->get($index - 1)->shift_sub2(), new \Exception('Нужны обмены в предпоследней группе'));
                     $index--;
                 } else {
-                    $pairs = collect();
+                    throw_if($pool->additional_teams->count() > 0, new \Exception('Пришел из верхней группы'));
+                    $add = $pool->teams;
+                    $index++;
+                    $pools->get($index)->set_additional_teams($add);
+                    /*$pairs = collect();
                     $pools->each(function ($pool, $i) use ($pairs) {
                         $pool->get_pairs()->each(function ($pair) use ($pairs, $i) {
                             $pairs->push([$pair[0]->name, $pair[1]->name, $i]);
                         });
                     });
-                    dd('Гавно', $pairs, $index, $pools->count() - 1);
+                    dd('Гавно', $pairs, $index, $pools->count() - 1);*/
                 }
             }
         }

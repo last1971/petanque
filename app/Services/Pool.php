@@ -11,11 +11,11 @@ class Pool
     /**
      * @var Collection
      */
-    protected $additional_teams;
+    public $additional_teams;
     /**
      * @var Collection
      */
-    protected $teams;
+    public $teams;
     /**
      * @var int
      */
@@ -213,7 +213,7 @@ class Pool
      * Обмен нужно доделать сортировку
      * @return bool
      */
-    private function exch_sub2() {
+    public function exch_sub2() {
         if ($this->next_exch == $this->sub1->count() || $this->other_exch == $this->sub2->count()) {
             return false;// вторая точка выхода
         }

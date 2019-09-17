@@ -27,7 +27,7 @@ Artisan::command('test', function () {
     //dd($a);
 
  $s = new RoundService();
-  dd($s->create_v3(50));
+  dd($s->create_v3(21));
    // $s = new TeamService();
    // dd($s->renumber(14));
 $a=1;

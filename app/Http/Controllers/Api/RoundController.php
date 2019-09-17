@@ -35,7 +35,7 @@ class RoundController extends Controller
     public function store(Request $request)
     {
         //
-        return $this->service->create($request->group_id);
+        return $this->service->create_v3($request->group_id);
     }
 
     /**
