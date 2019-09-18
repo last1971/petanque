@@ -23,7 +23,7 @@ class GameController extends Controller
     public function index(Request $request)
     {
         //
-        return $this->service->index($request->round_id)->with($this->with)->paginate();
+        return $this->service->index($request->round_id)->with($this->with)->paginate($request->per_page);
     }
 
     /**

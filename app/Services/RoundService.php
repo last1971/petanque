@@ -75,6 +75,10 @@ class RoundService
                    //     throw_if(!$pools->get($index - 1)->exch_sub2(), new \Exception('Нужны обЪединять группы'));
                    // }
                     throw_if(!$pools->get($index - 1)->shift_sub2(), new \Exception('Нужны обмены в предпоследней группе'));
+                    //if(!$pools->get($index - 1)->shift_sub2()) {
+                    //    $pools->get($index - 1)->teams->merge($pool->teams);
+                    //    $pools->pop();
+                    //}
                     $index--;
                 } else {
                     throw_if($pool->additional_teams->count() > 0, new \Exception('Пришел из верхней группы'));
