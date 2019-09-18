@@ -5,6 +5,7 @@ namespace App\Services;
 
 
 use App\Group;
+use App\Member;
 use App\Team;
 
 class TeamService
@@ -46,5 +47,20 @@ class TeamService
         {
             $group->teams()->updateExistingPivot($team->id, [ 'odd' => $i++ >= $group->teams->count() / 2 ]);
         }
+    }
+
+    public function was(int $team_id, int $group_id)
+    {
+        return Member::query()
+            ->whereTeamId($team_id)
+            ->whereIn('members.game_id', function ($q1) use ($group_id) {
+                $q1->select('id')->from('games')->whereIn('round_id', function ($q2) use ($group_id) {
+                    $q2->select('id')->from('rounds')->whereGroupId($group_id);
+                });
+            })
+            ->selectRaw('(SELECT b.name FROM members a JOIN teams b ON b.id = a.team_id WHERE a.team_id != members.team_id AND a.game_id = members.game_id) as name')
+            ->orderBy('name')
+            ->get()
+            ->pluck('name');
     }
 }

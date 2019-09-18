@@ -24,7 +24,11 @@ class TeamController extends Controller
     public function index(Request $request)
     {
         //
-        return $this->service->index($request->all())->paginate($request->per_page);
+        $teams = $this->service->index($request->all())->paginate($request->per_page);
+        foreach ($teams as $team) {
+            $team->was_names = $this->service->was($team->id, $request->group_id);
+        }
+        return $teams;
     }
 
     /**

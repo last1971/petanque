@@ -43,6 +43,16 @@ class RoundService
         return $round;
     }
 
+    public function destroy($id)
+    {
+        $round = Round::with('games')->find($id);
+        Member::query()->whereIn(
+            'game_id', $round->games->pluck('id'))->delete();
+        $round->games()->delete();
+        $round->delete();
+        return 'Ok';
+    }
+
     public function create_v3($group_id)
     {
         $group = Group::find($group_id);

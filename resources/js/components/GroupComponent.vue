@@ -17,6 +17,9 @@
                     <b-btn :disabled="!new_roond_possible" @click="make_round">
                         Новый раунд
                     </b-btn>
+                    <b-btn v-if="rounds.length > 0"variant="danger" @click="remove_round">
+                        <i class="fas fa-minus" aria-hidden="true"></i>
+                    </b-btn>
                 </div>
             </b-card>
             <b-card header="Команды">
@@ -53,7 +56,12 @@
                                     </span>
                                 </td>
                                 <td>
-                                    {{ value.name }}
+                                    <div>{{ value.name }}</div>
+                                    <div v-if="value.was_names">
+                                        <span v-for="(w, i) in value.was_names" :key="i" class="small">
+                                            {{ w }}, {{ ' ' }}
+                                        </span>
+                                    </div>
                                 </td>
                                 <td> {{ value.winner }}</td>
                                 <td> {{ value.rank }}</td>
@@ -169,6 +177,10 @@
                     .then(res => {
                         this.$store.commit('ROUND/SORT_DATA', ['number'])
                     })
+            },
+            remove_round() {
+                let id  = _.last(this.rounds).id;
+                this.$store.dispatch('ROUND/DELETE', id);
             }
         },
 

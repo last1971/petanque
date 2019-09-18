@@ -76,7 +76,6 @@ class GroupService
             ->orderByDesc('buhgolc')
             ->orderByDesc('points')
             ->orderByDesc('rank');
-
         return $query;
     }
 }
