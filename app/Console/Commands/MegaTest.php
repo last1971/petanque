@@ -43,21 +43,20 @@ class MegaTest extends Command
     public function handle()
     {
         //
-        for ($j = 0; $j < 100; $j++) {
+        for ($j = 0; $j < 1; $j++) {
             $event = (new EventService())->store([
-                'name' => 'TEST' . uniqid(),
+                'name' => 'TEST - ' . uniqid(),
                 'date' => Carbon::now()->format('d/m/Y'),
-                'rounds' => 5,
                 'user_id' => 1
             ]);
-            $event->tracks()->sync([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
-            $group = (new GroupService())->store($event->id);
-            for ($i = 1; $i < 21; $i++) {
-                $team = (new TeamService())->store((string)$i);
-                $group->teams()->attach($team->id);
+            for ($i = 1; $i < 41; $i++) {
+                $team = (new TeamService())->store(
+                    str_pad((string)$i, 2, '0', STR_PAD_LEFT)
+                );
+                $event->teams()->attach($team->id);
             }
             for ($i = 0; $i < 5; $i++) {
-                $round = (new RoundService())->create_v3($group->id);
+                $round = (new RoundService())->create($event->id);
                 foreach ($round->games as $game) {
                     $game->load('members');
                     $points1 = random_int(0, 13);

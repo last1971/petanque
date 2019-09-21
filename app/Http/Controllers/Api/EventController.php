@@ -12,7 +12,7 @@ class EventController extends Controller
 {
     protected $service;
 
-    protected $with = ['user', 'groups.rounds'];
+    protected $with = ['user', 'rounds'];
 
     public function __construct()
     {

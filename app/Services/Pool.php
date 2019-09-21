@@ -62,6 +62,21 @@ class Pool
          $this->teams = $teams->values();
          $this->additional_teams = collect();
          $this->wins = $wins;
+         $this->make_sub();
+    }
+
+    /**
+     * @return bool|null
+     */
+    public function next_variant()
+    {
+        if ($this->shift_sub2()) {
+            return $this->pre_pairing();
+        }
+        if ($this->exch_sub2()) {
+            return $this->pre_pairing();
+        }
+        return null;
     }
 
     /**
@@ -80,6 +95,11 @@ class Pool
         }
         // Возвращаем неудачу или команды без пары
         return $result ? $this->sub2_get()->slice($this->sub1->count())->values() : false;
+    }
+
+    public function not_sub()
+    {
+        return $this->sub1->count() == 0;
     }
 
     /**
@@ -112,11 +132,20 @@ class Pool
     }
 
     /**
+     * @return Collection
+     */
+    private function forming_new_additional()
+    {
+        return $this->sub2_get()->slice($this->sub1->count())->values();
+    }
+
+    /**
      * @param Collection $additional_teams
      */
     public function set_additional_teams(Collection $additional_teams)
     {
         $this->additional_teams = $additional_teams;
+        $this->make_sub();
     }
     /**
      * Формируем подгруппы
@@ -143,7 +172,7 @@ class Pool
      * Проверяем что получатся все пары
      * @return bool
      */
-    private function pre_pairing()
+    public function pre_pairing()
     {
         $possible = true;
         $sub2 = $this->sub2_get();
@@ -154,7 +183,7 @@ class Pool
                 break;
             }
         }
-        return $possible;
+        return $possible ? $this->forming_new_additional() : false;
     }
 
     /**

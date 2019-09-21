@@ -37,28 +37,34 @@ class DatabaseSeeder extends Seeder
         );
         $root = Role::firstOrCreate([
             'name'       => 'root',
+            'guard_name' => 'api'
         ]);
         if (!$u->hasRole('root')) $u->assignRole('root');
         $admin = Role::firstOrCreate([
-            'name'      => 'admin',
+            'name'       => 'admin',
+            'guard_name' => 'api'
         ]);
         if (!$u1->hasRole('admin')) $u->assignRole('admin');
         $user = Role::firstOrCreate([
-            'name'      => 'user',
+            'name'       => 'user',
+            'guard_name' => 'api'
         ]);
         $guest = Role::firstOrCreate([
-            'name'      => 'guest',
+            'name'       => 'guest',
+            'guard_name' => 'api'
         ]);
         $see_all = Permission::firstOrCreate([
-            'name'      => 'see_all',
+            'name'       => 'see_all',
+            'guard_name' => 'api'
         ]);
         $root->givePermissionTo($see_all);
         $see_own = Permission::firstOrCreate([
-            'name'      => 'see_own',
+            'name'       => 'see_own',
+            'guard_name' => 'api'
         ]);
         $admin->givePermissionTo($see_own);
         for ($i = 1; $i < 33; $i++) {
-            Track::create([ 'name' => 'Дорожка '. $i ]);
+            Track::firstOrCreate([ 'name' => 'Дорожка '. $i ]);
         }
     }
 }

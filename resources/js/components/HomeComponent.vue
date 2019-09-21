@@ -25,7 +25,7 @@
                     <td>
                         <router-link :to="{ name: 'event', params: { id: value.id } }">{{ value.name }}</router-link>
                     </td>
-                    <td>{{ value.rounds }}</td>
+                    <td>{{ value.rounds.length }}</td>
                     <td>{{ value.user.name }}</td>
                     <td>
                         <b-btn variant="danger" @click="remove_event(value.id)">
@@ -36,7 +36,7 @@
                 <tr v-if="insert_mode">
                     <td><b-input v-model="new_event.date"></b-input></td>
                     <td><b-input v-model="new_event.name"></b-input></td>
-                    <td><b-form-input v-model="new_event.rounds" type="number" min="4"></b-form-input></td>
+                    <td>0</td>
                     <td>{{ user_name }}</td>
                     <td>
                         <b-btn variant="success" @click="add_event">
@@ -80,7 +80,6 @@
                 new_event: {
                     id: 0,
                     name: '',
-                    rounds: 4,
                     date:  (new Date()).getDate().toString() + '/' + ((new Date()).getMonth()+1).toString() + '/' + (new Date()).getFullYear().toString()
                 },
                 items: [
@@ -100,7 +99,7 @@
                 this.insert_mode = !this.insert_mode
             },
             add_event() {
-                this. new_event.user_id = this.user.id
+                this.new_event.user_id = this.user.id
                 this.$store.dispatch('EVENT/TO_PAGE', this.new_event)
                     .then(res => {
                         this.new_event = _.cloneDeep(this.$store.getters['EVENT/CACHE'](0))
@@ -112,7 +111,13 @@
             }
         },
         created() {
-            this.$store.dispatch('EVENT/SET_QUERY', { page: 1 })
+            this.$store.dispatch('EVENT/SET_QUERY', { page: this.$route.query.page ? this.$route.query.page : 1 })
+        },
+        beforeRouteUpdate(to, from, next) {
+            if (to.params.page) {
+                this.$store.dispatch('EVENT/SET_QUERY', { page: to.query.page })
+            }
+            next()
         }
     }
 </script>

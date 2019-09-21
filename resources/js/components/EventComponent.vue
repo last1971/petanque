@@ -2,43 +2,96 @@
     <div class="mt-4">
         <b-breadcrumb :items="items"></b-breadcrumb>
         <b-card-group deck>
-            <b-card header="Группы">
+            <b-card header="Раунды" style="max-width: 20rem;">
                 <b-card-body>
-                    <router-link v-for="(value, index) in data"
-                                 :key="index"
-                                 :to="{ name: 'group', params: { id: value.id }}"
-                    >
-                        {{ value.name }}
-                    </router-link>
+                    <div v-for="(value, index) in rounds" :key="index">
+                        <router-link :to="{ name: 'round', params: { id: value.id } }">
+                            {{ value.number + ' ' }} раунд
+                        </router-link>
+                    </div>
                 </b-card-body>
                 <div slot="footer">
                     <b-btn :to="{ name: 'home' }">
                         <i class="fas fa-hand-point-left" aria-hidden="true"></i>
                     </b-btn>
-                    <b-btn v-if="tracks.length > 3" variant="success" @click="add_group" :disabled="event_started">
-                        <i class="fas fa-plus" aria-hidden="true"></i>
+                    <b-btn :disabled="!new_round_possible" @click="make_round">
+                        Новый раунд
                     </b-btn>
-                    <b-btn v-if="tracks.length > 3 && data.length > 0" variant="danger" @click="remove_group" :disabled="event_started">
+                    <b-btn v-if="rounds.length > 0"variant="danger" @click="remove_round">
                         <i class="fas fa-minus" aria-hidden="true"></i>
                     </b-btn>
                 </div>
             </b-card>
-            <b-card header="Дорожки">
+            <b-card header="Команды">
                 <b-card-body>
-                    <span v-for="(value, index) in tracks">
-                        <b>{{ value.name + ', ' }}</b>
-                    </span>
+                    <table class="table">
+                        <thead>
+                            <th scope="col">
+                                №
+                            </th>
+                            <th scope="col">
+                                Наименование
+                            </th>
+                            <th scope="col">
+                                Поб.
+                            </th>
+                            <th scope="col">
+                                Бух.
+                            </th>
+                            <th scope="col">
+                                Разн.
+                            </th>
+                            <th scope="col">
+                                М.Бух.
+                            </th>
+                            <th scope="col">
+                                Ран.
+                            </th>
+                        </thead>
+                        <tbody>
+                            <tr v-for="(value, index) in teams" :key="index">
+                                <td>
+                                    <span>
+                                        {{ index + 1}}
+                                    </span>
+                                </td>
+                                <td>
+                                    <div>{{ value.name }}</div>
+                                    <div v-if="value.was_names && soperniki">
+                                        <span v-for="(w, i) in value.was_names" :key="i" class="small">
+                                            {{ w }}, {{ ' ' }}
+                                        </span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <b-btn v-if="!end_team_enter" variant="danger" size="sm" @click="remove_team(value.id)">
+                                        <i class="fas fa-trash-alt" aria-hidden="true"></i>
+                                    </b-btn>
+                                    <span v-else>
+                                        {{ value.winner }}
+                                    </span>
+                                </td>
+                                <td> {{ value.buhgolc }}</td>
+                                <td> {{ value.points }}</td>
+                                <td> {{ value.mega_buhgolc }}</td>
+                                <td> {{ value.rank }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </b-card-body>
                 <div slot="footer">
-                    <b-btn :to="{ name: 'home' }">
-                        <i class="fas fa-hand-point-left" aria-hidden="true"></i>
-                    </b-btn>
-                    <b-btn variant="success" @click="add_track" :disabled="event_started">
-                        <i class="fas fa-plus" aria-hidden="true"></i>
-                    </b-btn>
-                    <b-btn v-if="tracks.length > 4"variant="danger" @click="remove_track" :disabled="event_started">
-                        <i class="fas fa-minus" aria-hidden="true"></i>
-                    </b-btn>
+                    <b-input-group>
+                        <b-input-group-prepend is-text>
+                            <b-checkbox v-model="end_team_enter" class="pr-2" :disabled="stop_commands">Команды набраны</b-checkbox>
+                        </b-input-group-prepend>
+                        <b-input v-model="team_name" @keypress.enter="add_team" v-if="input_teams"></b-input>
+                        <b-input-group-append v-if="input_teams">
+                            <b-btn @click="add_team"><i class="fas fa-hand-point-up" aria-hidden="true"></i></b-btn>
+                        </b-input-group-append>
+                        <b-input-group-prepend v-else is-text>
+                            <b-checkbox v-model="soperniki" class="pr-2">Соперники</b-checkbox>
+                        </b-input-group-prepend>
+                    </b-input-group>
                 </div>
             </b-card>
         </b-card-group>
@@ -52,51 +105,91 @@
 
         data() {
             return {
-                event_id: 0,
-                event_started: false,
+                event: { id: 0, rounds: [], name: '' },
                 items: [
                     {
                         text: 'События',
                         to: { name: 'home' }
                     },
-                    {
-                        text: 'Текущее',
-                        active: true
-                    }
-                ]
+                ],
+                team_name: '',
+                end_team_enter: false,
+                stop_flag: false,
+                soperniki: false,
             }
         },
 
         computed: {
-            ...mapGetters({ data: 'GROUP/DATA', tracks: 'TRACK/DATA' }),
+            ...mapGetters({
+                teams: 'TEAM/DATA',
+                rounds: 'ROUND/DATA'
+            }),
+            new_round_possible() {
+                return this.end_team_enter
+            },
+            stop_commands() {
+                return this.teams.length < 10 || this.event.rounds.length > 0
+            },
+            input_teams() {
+                return !this.end_team_enter
+            }
+        },
+
+        watch: {
+            end_team_enter(val) {
+                if (this.rounds.length == 0 && val) {
+                    this.$store.dispatch('TEAM/SET_QUERY', { event_id: this.event.id, per_page: 100 })
+                        .then(res => {} )
+                }
+            }
         },
 
         methods: {
             update_event(to) {
-                this.event_id = to.params.id
-                this.$store.dispatch('GROUP/SET_QUERY', { event_id: to.params.id, per_page: 30 })
-                this.$store.dispatch('TRACK/SET_QUERY', { event_id: to.params.id, per_page: 40 })
-                this.$store.dispatch('EVENT/CHECK_CACHE', this.event_id)
+                this.$store.dispatch('EVENT/CHECK_CACHE', to.params.id)
                     .then(res => {
-                        this.items[1].text = 'Текущее "' + res.name + '"'
-                        this.event_started = res.groups.reduce( (f, group) => {
-                            return f || group.rounds.length > 0
-                        }, false)
+                        this.event = res
+                        this.end_team_enter = this.event.rounds.length > 0
+                        this.items = [
+                            {
+                                text: 'События',
+                                to: { name: 'home' }
+                            },
+                            {
+                                text: 'Текущее "' + res.name + '"',
+                                active: true
+                            },
+                        ]
+                        this.$store.dispatch('TEAM/SET_QUERY', { event_id: this.event.id, per_page: 100 })
+                        this.$store.dispatch('ROUND/SET_QUERY', { event_id: this.event.id, per_page: 100 })
                     })
             },
-            add_group() {
-                this.$store.dispatch('GROUP/TO_PAGE', { event_id: this.event_id })
-                    .then(() => this.$store.commit('GROUP/SORT_DATA', ['name']))
+
+            add_team() {
+                this.$store.dispatch('TEAM/TO_PAGE', { name: this.team_name, event_id: this.event.id })
+                    .then(res => {
+                        this.team_name = ''
+                    })
             },
-            remove_group() {
-                this.$store.dispatch('GROUP/DELETE', this.data[this.data.length - 1].id)
+
+            remove_team(id) {
+                this.$store.dispatch('TEAM/DELETE_WITH', { id: id, with: this.event.id })
             },
-            add_track() {
-                this.$store.dispatch('TRACK/TO_PAGE', { event_id: this.event_id })
-                    .then(() => this.$store.commit('TRACK/SORT_DATA', ['name']))
+
+            make_round() {
+                this.$store.dispatch('ROUND/TO_PAGE', { id: 0, event_id: this.event.id })
+                    .then(res => {
+                        this.$store.commit('ROUND/SORT_DATA', ['number'])
+                        this.event.rounds.push(res)
+                    })
             },
-            remove_track() {
-                this.$store.dispatch('TRACK/DELETE_LAST', this.event_id)
+
+            remove_round() {
+                let id  = _.last(this.rounds).id;
+                this.$store.dispatch('ROUND/DELETE', id)
+                    .then(res => {
+                        this.$store.dispatch('TEAM/LOAD')
+                    })
             }
         },
 

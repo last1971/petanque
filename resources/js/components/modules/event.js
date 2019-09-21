@@ -12,7 +12,6 @@ state.cache[0] = {
     id: 0,
     name: '',
     date:  date.getDate().toString() + '/' + (date.getMonth()+1).toString() + '/' + date.getFullYear().toString(),
-    rounds: 0,
 }
 
 export default {

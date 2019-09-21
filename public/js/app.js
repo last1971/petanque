@@ -1751,200 +1751,68 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: "EventComponent",
   data: function data() {
     return {
-      event_id: 0,
-      event_started: false,
-      items: [{
-        text: 'События',
-        to: {
-          name: 'home'
-        }
-      }, {
-        text: 'Текущее',
-        active: true
-      }]
-    };
-  },
-  computed: _objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_0__["mapGetters"])({
-    data: 'GROUP/DATA',
-    tracks: 'TRACK/DATA'
-  })),
-  methods: {
-    update_event: function update_event(to) {
-      var _this = this;
-
-      this.event_id = to.params.id;
-      this.$store.dispatch('GROUP/SET_QUERY', {
-        event_id: to.params.id,
-        per_page: 30
-      });
-      this.$store.dispatch('TRACK/SET_QUERY', {
-        event_id: to.params.id,
-        per_page: 40
-      });
-      this.$store.dispatch('EVENT/CHECK_CACHE', this.event_id).then(function (res) {
-        _this.items[1].text = 'Текущее "' + res.name + '"';
-        _this.event_started = res.groups.reduce(function (f, group) {
-          return f || group.rounds.length > 0;
-        }, false);
-      });
-    },
-    add_group: function add_group() {
-      var _this2 = this;
-
-      this.$store.dispatch('GROUP/TO_PAGE', {
-        event_id: this.event_id
-      }).then(function () {
-        return _this2.$store.commit('GROUP/SORT_DATA', ['name']);
-      });
-    },
-    remove_group: function remove_group() {
-      this.$store.dispatch('GROUP/DELETE', this.data[this.data.length - 1].id);
-    },
-    add_track: function add_track() {
-      var _this3 = this;
-
-      this.$store.dispatch('TRACK/TO_PAGE', {
-        event_id: this.event_id
-      }).then(function () {
-        return _this3.$store.commit('TRACK/SORT_DATA', ['name']);
-      });
-    },
-    remove_track: function remove_track() {
-      this.$store.dispatch('TRACK/DELETE_LAST', this.event_id);
-    }
-  },
-  beforeRouteEnter: function beforeRouteEnter(to, from, next) {
-    next(function (vm) {
-      vm.update_event(to);
-    });
-  },
-  beforeRouteUpdate: function beforeRouteUpdate(to, from, next) {
-    this.update_event(to);
-    next();
-  }
-});
-
-/***/ }),
-
-/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/GroupComponent.vue?vue&type=script&lang=js&":
-/*!*************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/GroupComponent.vue?vue&type=script&lang=js& ***!
-  \*************************************************************************************************************************************************************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var vuex__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vuex */ "./node_modules/vuex/dist/vuex.esm.js");
-function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
-
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(source, true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(source).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
-
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-
-/* harmony default export */ __webpack_exports__["default"] = ({
-  name: "GroupComponent",
-  data: function data() {
-    return {
-      group_id: 0,
       event: {
-        id: 1,
-        rounds: 0
+        id: 0,
+        rounds: [],
+        name: ''
       },
       items: [{
         text: 'События',
@@ -1954,71 +1822,60 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       }],
       team_name: '',
       end_team_enter: false,
-      stop_flag: false
+      stop_flag: false,
+      soperniki: false
     };
   },
   computed: _objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_0__["mapGetters"])({
     teams: 'TEAM/DATA',
     rounds: 'ROUND/DATA'
   }), {
-    new_roond_possible: function new_roond_possible() {
-      return this.end_team_enter && this.rounds.length < this.event.rounds;
+    new_round_possible: function new_round_possible() {
+      return this.end_team_enter;
     },
     stop_commands: function stop_commands() {
-      return !this.event.tracks ? true : this.rounds.length > 0 || this.teams.length != this.event.tracks.length * 2;
+      return this.teams.length < 10 || this.event.rounds.length > 0;
     },
     input_teams: function input_teams() {
-      return this.event.tracks ? !this.end_team_enter && this.event.tracks.length * 2 > this.teams.length : false;
+      return !this.end_team_enter;
     }
   }),
   watch: {
     end_team_enter: function end_team_enter(val) {
       if (this.rounds.length == 0 && val) {
         this.$store.dispatch('TEAM/SET_QUERY', {
-          group_id: this.group_id,
-          renumber: true,
+          event_id: this.event.id,
           per_page: 100
         }).then(function (res) {});
       }
     }
   },
   methods: {
-    update_group: function update_group(to) {
+    update_event: function update_event(to) {
       var _this = this;
 
-      this.group_id = to.params.id;
-      this.$store.dispatch('TEAM/SET_QUERY', {
-        group_id: this.group_id,
-        per_page: 100
-      }).then(function (res) {
-        if (_this.event.tracks) {
-          _this.end_team_enter = _this.teams.length == _this.event.tracks.length * 2;
-        }
-      });
-      this.$store.dispatch('ROUND/SET_QUERY', {
-        group_id: this.group_id,
-        per_page: 100
-      });
-      this.$store.dispatch('GROUP/CHECK_CACHE', this.group_id).then(function (res) {
-        _this.event = res.event;
-        _this.end_team_enter = _this.teams.length == res.event.tracks.length * 2;
+      this.$store.dispatch('EVENT/CHECK_CACHE', to.params.id).then(function (res) {
+        _this.event = res;
+        _this.end_team_enter = _this.event.rounds.length > 0;
         _this.items = [{
           text: 'События',
           to: {
             name: 'home'
           }
         }, {
-          text: 'Текущее "' + res.event.name + '"',
-          to: {
-            name: 'event',
-            params: {
-              id: res.event.id
-            }
-          }
-        }, {
-          text: res.name,
+          text: 'Текущее "' + res.name + '"',
           active: true
         }];
+
+        _this.$store.dispatch('TEAM/SET_QUERY', {
+          event_id: _this.event.id,
+          per_page: 100
+        });
+
+        _this.$store.dispatch('ROUND/SET_QUERY', {
+          event_id: _this.event.id,
+          per_page: 100
+        });
       });
     },
     add_team: function add_team() {
@@ -2026,7 +1883,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
       this.$store.dispatch('TEAM/TO_PAGE', {
         name: this.team_name,
-        group_id: this.group_id
+        event_id: this.event.id
       }).then(function (res) {
         _this2.team_name = '';
       });
@@ -2034,7 +1891,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     remove_team: function remove_team(id) {
       this.$store.dispatch('TEAM/DELETE_WITH', {
         id: id,
-        "with": this.group_id
+        "with": this.event.id
       });
     },
     make_round: function make_round() {
@@ -2042,24 +1899,30 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
       this.$store.dispatch('ROUND/TO_PAGE', {
         id: 0,
-        group_id: this.group_id
+        event_id: this.event.id
       }).then(function (res) {
         _this3.$store.commit('ROUND/SORT_DATA', ['number']);
+
+        _this3.event.rounds.push(res);
       });
     },
     remove_round: function remove_round() {
+      var _this4 = this;
+
       var id = _.last(this.rounds).id;
 
-      this.$store.dispatch('ROUND/DELETE', id);
+      this.$store.dispatch('ROUND/DELETE', id).then(function (res) {
+        _this4.$store.dispatch('TEAM/LOAD');
+      });
     }
   },
   beforeRouteEnter: function beforeRouteEnter(to, from, next) {
     next(function (vm) {
-      vm.update_group(to);
+      vm.update_event(to);
     });
   },
   beforeRouteUpdate: function beforeRouteUpdate(to, from, next) {
-    this.update_group(to);
+    this.update_event(to);
     next();
   }
 });
@@ -2172,7 +2035,6 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       new_event: {
         id: 0,
         name: '',
-        rounds: 4,
         date: new Date().getDate().toString() + '/' + (new Date().getMonth() + 1).toString() + '/' + new Date().getFullYear().toString()
       },
       items: [{
@@ -2209,8 +2071,17 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
   },
   created: function created() {
     this.$store.dispatch('EVENT/SET_QUERY', {
-      page: 1
+      page: this.$route.query.page ? this.$route.query.page : 1
     });
+  },
+  beforeRouteUpdate: function beforeRouteUpdate(to, from, next) {
+    if (to.params.page) {
+      this.$store.dispatch('EVENT/SET_QUERY', {
+        page: to.query.page
+      });
+    }
+
+    next();
   }
 });
 
@@ -2459,16 +2330,19 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     random: function random() {
       var _this = this;
 
+      var delay = 0;
       this.games.forEach(function (value) {
-        value.members[0].points = _this.getRandomInt(14);
-        var flag = true;
+        if (value.members.length > 1) {
+          value.members[0].points = _this.getRandomInt(14);
+          var flag = true;
 
-        while (value.members[0].points == value.members[1].points || flag) {
-          flag = false;
-          value.members[1].points = _this.getRandomInt(14);
+          while (value.members[0].points == value.members[1].points || flag) {
+            flag = false;
+            value.members[1].points = _this.getRandomInt(14);
+          }
+
+          _.delay(_this.save, 500 * delay++, value);
         }
-
-        _this.save(value);
       });
     },
     reload: function reload() {
@@ -2516,26 +2390,18 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         per_page: 100
       });
       this.$store.dispatch('ROUND/CHECK_CACHE', this.round_id).then(function (result) {
-        _this3.$store.dispatch('GROUP/CHECK_CACHE', result.group_id).then(function (res) {
+        _this3.$store.dispatch('EVENT/CHECK_CACHE', result.event_id).then(function (res) {
           _this3.items = [{
             text: 'События',
             to: {
               name: 'home'
             }
           }, {
-            text: 'Текущее "' + res.event.name + '"',
+            text: 'Текущее "' + res.name + '"',
             to: {
               name: 'event',
               params: {
-                id: res.event.id
-              }
-            }
-          }, {
-            text: res.name,
-            to: {
-              name: 'group',
-              params: {
-                id: result.group_id
+                id: res.id
               }
             }
           }, {
@@ -23027,7 +22893,7 @@ var VBTooltip = {
 /*!*************************************************!*\
   !*** ./node_modules/bootstrap-vue/esm/index.js ***!
   \*************************************************/
-/*! exports provided: componentsPlugin, BVModalPlugin, BVToastPlugin, AlertPlugin, BAlert, BadgePlugin, BBadge, BreadcrumbPlugin, BBreadcrumb, BBreadcrumbItem, ButtonPlugin, BButton, BButtonClose, ButtonGroupPlugin, BButtonGroup, ButtonToolbarPlugin, BButtonToolbar, CardPlugin, BCard, BCardBody, BCardFooter, BCardGroup, BCardHeader, BCardImg, BCardImgLazy, BCardSubTitle, BCardText, BCardTitle, CarouselPlugin, BCarousel, BCarouselSlide, CollapsePlugin, BCollapse, DropdownPlugin, BDropdown, BDropdownItem, BDropdownItemButton, BDropdownDivider, BDropdownForm, BDropdownGroup, BDropdownHeader, BDropdownText, EmbedPlugin, BEmbed, FormPlugin, BForm, BFormDatalist, BFormText, BFormInvalidFeedback, BFormValidFeedback, FormCheckboxPlugin, BFormCheckbox, BFormCheckboxGroup, FormFilePlugin, BFormFile, FormGroupPlugin, BFormGroup, FormInputPlugin, BFormInput, FormRadioPlugin, BFormRadio, BFormRadioGroup, FormSelectPlugin, BFormSelect, FormTextareaPlugin, BFormTextarea, ImagePlugin, BImg, BImgLazy, InputGroupPlugin, BInputGroup, BInputGroupAddon, BInputGroupAppend, BInputGroupPrepend, BInputGroupText, JumbotronPlugin, BJumbotron, LayoutPlugin, BContainer, BRow, BCol, BFormRow, LinkPlugin, BLink, ListGroupPlugin, BListGroup, BListGroupItem, MediaPlugin, BMedia, BMediaAside, BMediaBody, ModalPlugin, BModal, NavPlugin, BNav, BNavForm, BNavItem, BNavItemDropdown, BNavText, NavbarPlugin, BNavbar, BNavbarBrand, BNavbarNav, BNavbarToggle, PaginationPlugin, BPagination, PaginationNavPlugin, BPaginationNav, PopoverPlugin, BPopover, ProgressPlugin, BProgress, BProgressBar, SpinnerPlugin, BSpinner, TablePlugin, TableLitePlugin, TableSimplePlugin, BTable, BTableLite, BTableSimple, BTbody, BThead, BTfoot, BTr, BTh, BTd, TabsPlugin, BTabs, BTab, ToastPlugin, BToast, BToaster, TooltipPlugin, BTooltip, directivesPlugin, VBModalPlugin, VBModal, VBPopoverPlugin, VBPopover, VBScrollspyPlugin, VBScrollspy, VBTogglePlugin, VBToggle, VBTooltipPlugin, VBTooltip, install, NAME, BVConfigPlugin, BVConfig, BootstrapVue, default */
+/*! exports provided: install, NAME, BVConfigPlugin, BVConfig, BootstrapVue, default, componentsPlugin, BVModalPlugin, BVToastPlugin, AlertPlugin, BAlert, BadgePlugin, BBadge, BreadcrumbPlugin, BBreadcrumb, BBreadcrumbItem, ButtonPlugin, BButton, BButtonClose, ButtonGroupPlugin, BButtonGroup, ButtonToolbarPlugin, BButtonToolbar, CardPlugin, BCard, BCardBody, BCardFooter, BCardGroup, BCardHeader, BCardImg, BCardImgLazy, BCardSubTitle, BCardText, BCardTitle, CarouselPlugin, BCarousel, BCarouselSlide, CollapsePlugin, BCollapse, DropdownPlugin, BDropdown, BDropdownItem, BDropdownItemButton, BDropdownDivider, BDropdownForm, BDropdownGroup, BDropdownHeader, BDropdownText, EmbedPlugin, BEmbed, FormPlugin, BForm, BFormDatalist, BFormText, BFormInvalidFeedback, BFormValidFeedback, FormCheckboxPlugin, BFormCheckbox, BFormCheckboxGroup, FormFilePlugin, BFormFile, FormGroupPlugin, BFormGroup, FormInputPlugin, BFormInput, FormRadioPlugin, BFormRadio, BFormRadioGroup, FormSelectPlugin, BFormSelect, FormTextareaPlugin, BFormTextarea, ImagePlugin, BImg, BImgLazy, InputGroupPlugin, BInputGroup, BInputGroupAddon, BInputGroupAppend, BInputGroupPrepend, BInputGroupText, JumbotronPlugin, BJumbotron, LayoutPlugin, BContainer, BRow, BCol, BFormRow, LinkPlugin, BLink, ListGroupPlugin, BListGroup, BListGroupItem, MediaPlugin, BMedia, BMediaAside, BMediaBody, ModalPlugin, BModal, NavPlugin, BNav, BNavForm, BNavItem, BNavItemDropdown, BNavText, NavbarPlugin, BNavbar, BNavbarBrand, BNavbarNav, BNavbarToggle, PaginationPlugin, BPagination, PaginationNavPlugin, BPaginationNav, PopoverPlugin, BPopover, ProgressPlugin, BProgress, BProgressBar, SpinnerPlugin, BSpinner, TablePlugin, TableLitePlugin, TableSimplePlugin, BTable, BTableLite, BTableSimple, BTbody, BThead, BTfoot, BTr, BTh, BTd, TabsPlugin, BTabs, BTab, ToastPlugin, BToast, BToaster, TooltipPlugin, BTooltip, directivesPlugin, VBModalPlugin, VBModal, VBPopoverPlugin, VBPopover, VBScrollspyPlugin, VBScrollspy, VBTogglePlugin, VBToggle, VBTooltipPlugin, VBTooltip */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -90100,191 +89966,6 @@ var render = function() {
         [
           _c(
             "b-card",
-            { attrs: { header: "Группы" } },
-            [
-              _c(
-                "b-card-body",
-                _vm._l(_vm.data, function(value, index) {
-                  return _c(
-                    "router-link",
-                    {
-                      key: index,
-                      attrs: { to: { name: "group", params: { id: value.id } } }
-                    },
-                    [
-                      _vm._v(
-                        "\n                    " +
-                          _vm._s(value.name) +
-                          "\n                "
-                      )
-                    ]
-                  )
-                }),
-                1
-              ),
-              _vm._v(" "),
-              _c(
-                "div",
-                { attrs: { slot: "footer" }, slot: "footer" },
-                [
-                  _c("b-btn", { attrs: { to: { name: "home" } } }, [
-                    _c("i", {
-                      staticClass: "fas fa-hand-point-left",
-                      attrs: { "aria-hidden": "true" }
-                    })
-                  ]),
-                  _vm._v(" "),
-                  _vm.tracks.length > 3
-                    ? _c(
-                        "b-btn",
-                        {
-                          attrs: {
-                            variant: "success",
-                            disabled: _vm.event_started
-                          },
-                          on: { click: _vm.add_group }
-                        },
-                        [
-                          _c("i", {
-                            staticClass: "fas fa-plus",
-                            attrs: { "aria-hidden": "true" }
-                          })
-                        ]
-                      )
-                    : _vm._e(),
-                  _vm._v(" "),
-                  _vm.tracks.length > 3 && _vm.data.length > 0
-                    ? _c(
-                        "b-btn",
-                        {
-                          attrs: {
-                            variant: "danger",
-                            disabled: _vm.event_started
-                          },
-                          on: { click: _vm.remove_group }
-                        },
-                        [
-                          _c("i", {
-                            staticClass: "fas fa-minus",
-                            attrs: { "aria-hidden": "true" }
-                          })
-                        ]
-                      )
-                    : _vm._e()
-                ],
-                1
-              )
-            ],
-            1
-          ),
-          _vm._v(" "),
-          _c(
-            "b-card",
-            { attrs: { header: "Дорожки" } },
-            [
-              _c(
-                "b-card-body",
-                _vm._l(_vm.tracks, function(value, index) {
-                  return _c("span", [
-                    _c("b", [_vm._v(_vm._s(value.name + ", "))])
-                  ])
-                }),
-                0
-              ),
-              _vm._v(" "),
-              _c(
-                "div",
-                { attrs: { slot: "footer" }, slot: "footer" },
-                [
-                  _c("b-btn", { attrs: { to: { name: "home" } } }, [
-                    _c("i", {
-                      staticClass: "fas fa-hand-point-left",
-                      attrs: { "aria-hidden": "true" }
-                    })
-                  ]),
-                  _vm._v(" "),
-                  _c(
-                    "b-btn",
-                    {
-                      attrs: {
-                        variant: "success",
-                        disabled: _vm.event_started
-                      },
-                      on: { click: _vm.add_track }
-                    },
-                    [
-                      _c("i", {
-                        staticClass: "fas fa-plus",
-                        attrs: { "aria-hidden": "true" }
-                      })
-                    ]
-                  ),
-                  _vm._v(" "),
-                  _vm.tracks.length > 4
-                    ? _c(
-                        "b-btn",
-                        {
-                          attrs: {
-                            variant: "danger",
-                            disabled: _vm.event_started
-                          },
-                          on: { click: _vm.remove_track }
-                        },
-                        [
-                          _c("i", {
-                            staticClass: "fas fa-minus",
-                            attrs: { "aria-hidden": "true" }
-                          })
-                        ]
-                      )
-                    : _vm._e()
-                ],
-                1
-              )
-            ],
-            1
-          )
-        ],
-        1
-      )
-    ],
-    1
-  )
-}
-var staticRenderFns = []
-render._withStripped = true
-
-
-
-/***/ }),
-
-/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/GroupComponent.vue?vue&type=template&id=6edbc169&scoped=true&":
-/*!*****************************************************************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/GroupComponent.vue?vue&type=template&id=6edbc169&scoped=true& ***!
-  \*****************************************************************************************************************************************************************************************************************************/
-/*! exports provided: render, staticRenderFns */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "render", function() { return render; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return staticRenderFns; });
-var render = function() {
-  var _vm = this
-  var _h = _vm.$createElement
-  var _c = _vm._self._c || _h
-  return _c(
-    "div",
-    { staticClass: "mt-4" },
-    [
-      _c("b-breadcrumb", { attrs: { items: _vm.items } }),
-      _vm._v(" "),
-      _c(
-        "b-card-group",
-        { attrs: { deck: "" } },
-        [
-          _c(
-            "b-card",
             {
               staticStyle: { "max-width": "20rem" },
               attrs: { header: "Раунды" }
@@ -90323,25 +90004,17 @@ var render = function() {
                 "div",
                 { attrs: { slot: "footer" }, slot: "footer" },
                 [
-                  _c(
-                    "b-btn",
-                    {
-                      attrs: {
-                        to: { name: "event", params: { id: _vm.event.id } }
-                      }
-                    },
-                    [
-                      _c("i", {
-                        staticClass: "fas fa-hand-point-left",
-                        attrs: { "aria-hidden": "true" }
-                      })
-                    ]
-                  ),
+                  _c("b-btn", { attrs: { to: { name: "home" } } }, [
+                    _c("i", {
+                      staticClass: "fas fa-hand-point-left",
+                      attrs: { "aria-hidden": "true" }
+                    })
+                  ]),
                   _vm._v(" "),
                   _c(
                     "b-btn",
                     {
-                      attrs: { disabled: !_vm.new_roond_possible },
+                      attrs: { disabled: !_vm.new_round_possible },
                       on: { click: _vm.make_round }
                     },
                     [
@@ -90400,19 +90073,25 @@ var render = function() {
                     _vm._v(" "),
                     _c("th", { attrs: { scope: "col" } }, [
                       _vm._v(
-                        "\n                            Ран.\n                        "
-                      )
-                    ]),
-                    _vm._v(" "),
-                    _c("th", { attrs: { scope: "col" } }, [
-                      _vm._v(
                         "\n                            Бух.\n                        "
                       )
                     ]),
                     _vm._v(" "),
                     _c("th", { attrs: { scope: "col" } }, [
                       _vm._v(
-                        "\n                            Очк.\n                        "
+                        "\n                            Разн.\n                        "
+                      )
+                    ]),
+                    _vm._v(" "),
+                    _c("th", { attrs: { scope: "col" } }, [
+                      _vm._v(
+                        "\n                            М.Бух.\n                        "
+                      )
+                    ]),
+                    _vm._v(" "),
+                    _c("th", { attrs: { scope: "col" } }, [
+                      _vm._v(
+                        "\n                            Ран.\n                        "
                       )
                     ])
                   ]),
@@ -90421,43 +90100,20 @@ var render = function() {
                     "tbody",
                     _vm._l(_vm.teams, function(value, index) {
                       return _c("tr", { key: index }, [
-                        _c(
-                          "td",
-                          [
-                            !_vm.end_team_enter
-                              ? _c(
-                                  "b-btn",
-                                  {
-                                    staticClass: "col-1",
-                                    attrs: { variant: "danger", size: "sm" },
-                                    on: {
-                                      click: function($event) {
-                                        return _vm.remove_team(value.id)
-                                      }
-                                    }
-                                  },
-                                  [
-                                    _c("i", {
-                                      staticClass: "fas fa-trash-alt",
-                                      attrs: { "aria-hidden": "true" }
-                                    })
-                                  ]
-                                )
-                              : _c("span", [
-                                  _vm._v(
-                                    "\n                                    " +
-                                      _vm._s(index + 1) +
-                                      "\n                                "
-                                  )
-                                ])
-                          ],
-                          1
-                        ),
+                        _c("td", [
+                          _c("span", [
+                            _vm._v(
+                              "\n                                    " +
+                                _vm._s(index + 1) +
+                                "\n                                "
+                            )
+                          ])
+                        ]),
                         _vm._v(" "),
                         _c("td", [
                           _c("div", [_vm._v(_vm._s(value.name))]),
                           _vm._v(" "),
-                          value.was_names
+                          value.was_names && _vm.soperniki
                             ? _c(
                                 "div",
                                 _vm._l(value.was_names, function(w, i) {
@@ -90480,13 +90136,45 @@ var render = function() {
                             : _vm._e()
                         ]),
                         _vm._v(" "),
-                        _c("td", [_vm._v(" " + _vm._s(value.winner))]),
-                        _vm._v(" "),
-                        _c("td", [_vm._v(" " + _vm._s(value.rank))]),
+                        _c(
+                          "td",
+                          [
+                            !_vm.end_team_enter
+                              ? _c(
+                                  "b-btn",
+                                  {
+                                    attrs: { variant: "danger", size: "sm" },
+                                    on: {
+                                      click: function($event) {
+                                        return _vm.remove_team(value.id)
+                                      }
+                                    }
+                                  },
+                                  [
+                                    _c("i", {
+                                      staticClass: "fas fa-trash-alt",
+                                      attrs: { "aria-hidden": "true" }
+                                    })
+                                  ]
+                                )
+                              : _c("span", [
+                                  _vm._v(
+                                    "\n                                    " +
+                                      _vm._s(value.winner) +
+                                      "\n                                "
+                                  )
+                                ])
+                          ],
+                          1
+                        ),
                         _vm._v(" "),
                         _c("td", [_vm._v(" " + _vm._s(value.buhgolc))]),
                         _vm._v(" "),
-                        _c("td", [_vm._v(" " + _vm._s(value.points))])
+                        _c("td", [_vm._v(" " + _vm._s(value.points))]),
+                        _vm._v(" "),
+                        _c("td", [_vm._v(" " + _vm._s(value.mega_buhgolc))]),
+                        _vm._v(" "),
+                        _c("td", [_vm._v(" " + _vm._s(value.rank))])
                       ])
                     }),
                     0
@@ -90566,7 +90254,27 @@ var render = function() {
                             ],
                             1
                           )
-                        : _vm._e()
+                        : _c(
+                            "b-input-group-prepend",
+                            { attrs: { "is-text": "" } },
+                            [
+                              _c(
+                                "b-checkbox",
+                                {
+                                  staticClass: "pr-2",
+                                  model: {
+                                    value: _vm.soperniki,
+                                    callback: function($$v) {
+                                      _vm.soperniki = $$v
+                                    },
+                                    expression: "soperniki"
+                                  }
+                                },
+                                [_vm._v("Соперники")]
+                              )
+                            ],
+                            1
+                          )
                     ],
                     1
                   )
@@ -90637,7 +90345,7 @@ var render = function() {
                   1
                 ),
                 _vm._v(" "),
-                _c("td", [_vm._v(_vm._s(value.rounds))]),
+                _c("td", [_vm._v(_vm._s(value.rounds.length))]),
                 _vm._v(" "),
                 _c("td", [_vm._v(_vm._s(value.user.name))]),
                 _vm._v(" "),
@@ -90701,22 +90409,7 @@ var render = function() {
                     1
                   ),
                   _vm._v(" "),
-                  _c(
-                    "td",
-                    [
-                      _c("b-form-input", {
-                        attrs: { type: "number", min: "4" },
-                        model: {
-                          value: _vm.new_event.rounds,
-                          callback: function($$v) {
-                            _vm.$set(_vm.new_event, "rounds", $$v)
-                          },
-                          expression: "new_event.rounds"
-                        }
-                      })
-                    ],
-                    1
-                  ),
+                  _c("td", [_vm._v("0")]),
                   _vm._v(" "),
                   _c("td", [_vm._v(_vm._s(_vm.user_name))]),
                   _vm._v(" "),
@@ -90999,9 +90692,11 @@ var render = function() {
               "div",
               { staticClass: "col-1" },
               [
-                _c("b-badge", { attrs: { variant: "light" } }, [
-                  _vm._v(_vm._s(value.track.name))
-                ])
+                value.track
+                  ? _c("b-badge", { attrs: { variant: "light" } }, [
+                      _vm._v(_vm._s(value.track.name))
+                    ])
+                  : _vm._e()
               ],
               1
             ),
@@ -91024,7 +90719,7 @@ var render = function() {
                     type: "number",
                     min: "0",
                     max: "13",
-                    disabled: _vm.mode(value)
+                    disabled: _vm.mode(value) || value.members.length == 0
                   },
                   model: {
                     value: value.members[0].points,
@@ -91038,70 +90733,74 @@ var render = function() {
               1
             ),
             _vm._v(" "),
-            _c(
-              "b-input-group",
-              { staticClass: "col-5" },
-              [
-                _c("b-form-input", {
-                  class: _vm.color(value, 1),
-                  attrs: {
-                    type: "number",
-                    min: "0",
-                    max: "13",
-                    disabled: _vm.mode(value)
-                  },
-                  model: {
-                    value: value.members[1].points,
-                    callback: function($$v) {
-                      _vm.$set(value.members[1], "points", $$v)
-                    },
-                    expression: "value.members[1].points"
-                  }
-                }),
-                _vm._v(" "),
-                _c("b-input-group-append", { attrs: { "is-text": "" } }, [
-                  _vm._v(
-                    "\n                " +
-                      _vm._s(value.members[1].team.name) +
-                      "\n            "
-                  )
-                ])
-              ],
-              1
-            ),
+            value.members.length > 1
+              ? _c(
+                  "b-input-group",
+                  { staticClass: "col-5" },
+                  [
+                    _c("b-form-input", {
+                      class: _vm.color(value, 1),
+                      attrs: {
+                        type: "number",
+                        min: "0",
+                        max: "13",
+                        disabled: _vm.mode(value)
+                      },
+                      model: {
+                        value: value.members[1].points,
+                        callback: function($$v) {
+                          _vm.$set(value.members[1], "points", $$v)
+                        },
+                        expression: "value.members[1].points"
+                      }
+                    }),
+                    _vm._v(" "),
+                    _c("b-input-group-append", { attrs: { "is-text": "" } }, [
+                      _vm._v(
+                        "\n                " +
+                          _vm._s(value.members[1].team.name) +
+                          "\n            "
+                      )
+                    ])
+                  ],
+                  1
+                )
+              : _vm._e(),
             _vm._v(" "),
-            _c(
-              "div",
-              { staticClass: "col-1 justify-content-center d-flex" },
-              [
-                _vm.mode(value)
-                  ? _c(
-                      "b-btn",
-                      {
-                        attrs: { "aria-hidden": "true" },
-                        on: {
-                          click: function($event) {
-                            return _vm.edit(value)
-                          }
-                        }
-                      },
-                      [_c("i", { staticClass: "fas fa-edit" })]
-                    )
-                  : _c(
-                      "b-btn",
-                      {
-                        attrs: { "aria-hidden": "true" },
-                        on: {
-                          click: function($event) {
-                            return _vm.save(value)
-                          }
-                        }
-                      },
-                      [_c("i", { staticClass: "fas fa-save" })]
-                    )
-              ],
-              1
-            )
+            value.members.length > 1
+              ? _c(
+                  "div",
+                  { staticClass: "col-1 justify-content-center d-flex" },
+                  [
+                    _vm.mode(value)
+                      ? _c(
+                          "b-btn",
+                          {
+                            attrs: { "aria-hidden": "true" },
+                            on: {
+                              click: function($event) {
+                                return _vm.edit(value)
+                              }
+                            }
+                          },
+                          [_c("i", { staticClass: "fas fa-edit" })]
+                        )
+                      : _c(
+                          "b-btn",
+                          {
+                            attrs: { "aria-hidden": "true" },
+                            on: {
+                              click: function($event) {
+                                return _vm.save(value)
+                              }
+                            }
+                          },
+                          [_c("i", { staticClass: "fas fa-save" })]
+                        )
+                  ],
+                  1
+                )
+              : _vm._e()
           ],
           1
         )
@@ -107384,75 +107083,6 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
-/***/ "./resources/js/components/GroupComponent.vue":
-/*!****************************************************!*\
-  !*** ./resources/js/components/GroupComponent.vue ***!
-  \****************************************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _GroupComponent_vue_vue_type_template_id_6edbc169_scoped_true___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./GroupComponent.vue?vue&type=template&id=6edbc169&scoped=true& */ "./resources/js/components/GroupComponent.vue?vue&type=template&id=6edbc169&scoped=true&");
-/* harmony import */ var _GroupComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./GroupComponent.vue?vue&type=script&lang=js& */ "./resources/js/components/GroupComponent.vue?vue&type=script&lang=js&");
-/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
-
-
-
-
-
-/* normalize component */
-
-var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
-  _GroupComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
-  _GroupComponent_vue_vue_type_template_id_6edbc169_scoped_true___WEBPACK_IMPORTED_MODULE_0__["render"],
-  _GroupComponent_vue_vue_type_template_id_6edbc169_scoped_true___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
-  false,
-  null,
-  "6edbc169",
-  null
-  
-)
-
-/* hot reload */
-if (false) { var api; }
-component.options.__file = "resources/js/components/GroupComponent.vue"
-/* harmony default export */ __webpack_exports__["default"] = (component.exports);
-
-/***/ }),
-
-/***/ "./resources/js/components/GroupComponent.vue?vue&type=script&lang=js&":
-/*!*****************************************************************************!*\
-  !*** ./resources/js/components/GroupComponent.vue?vue&type=script&lang=js& ***!
-  \*****************************************************************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_GroupComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/babel-loader/lib??ref--4-0!../../../node_modules/vue-loader/lib??vue-loader-options!./GroupComponent.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/GroupComponent.vue?vue&type=script&lang=js&");
-/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_GroupComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
-
-/***/ }),
-
-/***/ "./resources/js/components/GroupComponent.vue?vue&type=template&id=6edbc169&scoped=true&":
-/*!***********************************************************************************************!*\
-  !*** ./resources/js/components/GroupComponent.vue?vue&type=template&id=6edbc169&scoped=true& ***!
-  \***********************************************************************************************/
-/*! exports provided: render, staticRenderFns */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_GroupComponent_vue_vue_type_template_id_6edbc169_scoped_true___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../node_modules/vue-loader/lib??vue-loader-options!./GroupComponent.vue?vue&type=template&id=6edbc169&scoped=true& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/GroupComponent.vue?vue&type=template&id=6edbc169&scoped=true&");
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_GroupComponent_vue_vue_type_template_id_6edbc169_scoped_true___WEBPACK_IMPORTED_MODULE_0__["render"]; });
-
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_GroupComponent_vue_vue_type_template_id_6edbc169_scoped_true___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
-
-
-
-/***/ }),
-
 /***/ "./resources/js/components/HomeComponent.vue":
 /*!***************************************************!*\
   !*** ./resources/js/components/HomeComponent.vue ***!
@@ -107854,8 +107484,7 @@ state.url = '/api/event';
 state.cache[0] = {
   id: 0,
   name: '',
-  date: date.getDate().toString() + '/' + (date.getMonth() + 1).toString() + '/' + date.getFullYear().toString(),
-  rounds: 0
+  date: date.getDate().toString() + '/' + (date.getMonth() + 1).toString() + '/' + date.getFullYear().toString()
 };
 /* harmony default export */ __webpack_exports__["default"] = ({
   namespaced: true,
@@ -108561,8 +108190,6 @@ var HomeComponent = __webpack_require__(/*! ./HomeComponent */ "./resources/js/c
 
 var EventComponent = __webpack_require__(/*! ./EventComponent */ "./resources/js/components/EventComponent.vue")["default"];
 
-var GroupComponent = __webpack_require__(/*! ./GroupComponent */ "./resources/js/components/GroupComponent.vue")["default"];
-
 var RoundComponent = __webpack_require__(/*! ./RoundComponent */ "./resources/js/components/RoundComponent.vue")["default"];
 
 var routes = [{
@@ -108587,14 +108214,6 @@ var routes = [{
   meta: {
     requiresAuth: true,
     title: 'Событие'
-  }
-}, {
-  name: 'group',
-  path: '/group/:id',
-  component: GroupComponent,
-  meta: {
-    requiresAuth: true,
-    title: 'Группа'
   }
 }, {
   name: 'round',

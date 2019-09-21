@@ -9,6 +9,10 @@ use Illuminate\Support\Facades\Auth;
 
 class EventService
 {
+    /**
+     * @param array $request
+     * @return \Illuminate\Database\Eloquent\Builder|mixed
+     */
     public function index(Array $request)
     {
         return Event::query()
@@ -17,11 +21,19 @@ class EventService
             });
     }
 
+    /**
+     * @param array $data
+     * @return \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Model
+     */
     public function store(Array $data)
     {
         return Event::query()->create($data);
     }
 
+    /**
+     * @param int $id
+     * @return int
+     */
     public function destroy(int $id)
     {
         return Event::destroy($id);

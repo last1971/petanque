@@ -12,23 +12,35 @@ class Event extends Model
 
     protected $casts = [ 'date' => 'date:d/m/Y' ];
 
+    /**
+     * @param $value
+     */
     public function setDateAttribute( $value )
     {
         $this->attributes['date'] = Carbon::createFromFormat('d/m/Y', $value);
     }
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
     public function user()
     {
         return $this->belongsTo('App\User');
     }
 
-    public function groups()
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function rounds()
     {
-        return $this->hasMany('App\Group')->orderBy('name');
+        return $this->hasMany('App\Round')->orderBy('id');
     }
 
-    public function tracks()
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function teams()
     {
-        return $this->belongsToMany('App\Track', 'event_track');
+        return $this->belongsToMany('App\Team', 'event_team');
     }
 }

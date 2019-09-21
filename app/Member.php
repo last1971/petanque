@@ -11,11 +11,17 @@ class Member extends Model
 
     protected $casts = [ 'winner' => 'boolean' ];
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
     public function game()
     {
         return $this->belongsTo('App\Game');
     }
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
     public function team()
     {
         return $this->belongsTo('App\Team');

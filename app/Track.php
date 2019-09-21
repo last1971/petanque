@@ -9,11 +9,9 @@ class Track extends Model
     //
     protected $fillable = [ 'name' ];
 
-    public function events()
-    {
-        return $this->belongsToMany('App\Event', 'event_track');
-    }
-
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
     public  function games()
     {
         return $this->hasMany('App\Game');

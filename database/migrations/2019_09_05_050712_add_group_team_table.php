@@ -13,12 +13,12 @@ class AddGroupTeamTable extends Migration
      */
     public function up()
     {
-        Schema::create('group_team', function (Blueprint $table) {
+        Schema::create('event_team', function (Blueprint $table) {
             //
             $table->bigIncrements('id');
-            $table->unsignedBigInteger('group_id');
+            $table->unsignedBigInteger('event_id');
             $table->unsignedBigInteger('team_id');
-            $table->foreign('group_id')->references('id')->on('groups');
+            $table->foreign('event_id')->references('id')->on('events');
             $table->foreign('team_id')->references('id')->on('teams');
         });
     }

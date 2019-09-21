@@ -7,13 +7,19 @@ use Illuminate\Database\Eloquent\Model;
 class Round extends Model
 {
     //
-    protected $fillable = ['number', 'group_id'];
+    protected $fillable = ['number', 'event_id'];
 
-    public function group()
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function event()
     {
-        return $this->belongsTo('App\Group');
+        return $this->belongsTo('App\Event');
     }
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
     public function games()
     {
         return $this->hasMany('App\Game');

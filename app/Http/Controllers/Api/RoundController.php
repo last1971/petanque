@@ -23,7 +23,7 @@ class RoundController extends Controller
     public function index(Request $request)
     {
         //
-        return $this->service->index($request->group_id)->paginate();
+        return $this->service->index($request->event_id)->paginate();
     }
 
     /**
@@ -35,7 +35,7 @@ class RoundController extends Controller
     public function store(Request $request)
     {
         //
-        return $this->service->create_v3($request->group_id);
+        return $this->service->create($request->event_id);
     }
 
     /**

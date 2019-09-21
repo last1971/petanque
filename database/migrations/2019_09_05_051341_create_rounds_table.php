@@ -16,9 +16,9 @@ class CreateRoundsTable extends Migration
         Schema::create('rounds', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->unsignedInteger('number');
-            $table->unsignedBigInteger('group_id');
+            $table->unsignedBigInteger('event_id');
             $table->timestamps();
-            $table->foreign('group_id')->references('id')->on('groups');
+            $table->foreign('event_id')->references('id')->on('events');
         });
     }
 

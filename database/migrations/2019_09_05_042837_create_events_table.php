@@ -17,7 +17,6 @@ class CreateEventsTable extends Migration
             $table->bigIncrements('id');
             $table->string('name');
             $table->date('date');
-            $table->unsignedInteger('rounds');
             $table->unsignedBigInteger('user_id');
             $table->timestamps();
             $table->unique(['date', 'name']);

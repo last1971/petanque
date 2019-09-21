@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Event;
 use App\Group;
 use App\Services\TeamService;
 use Illuminate\Http\Request;
@@ -16,17 +17,22 @@ class TeamController extends Controller
     {
         $this->service = new TeamService();
     }
+
     /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
+     * @param Request $request
+     * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator
      */
     public function index(Request $request)
     {
         //
-        $teams = $this->service->index($request->all())->paginate($request->per_page);
+        $teams = $this->service->rating($request->event_id)->paginate($request->per_page);
         foreach ($teams as $team) {
-            $team->was_names = $this->service->was($team->id, $request->group_id);
+            $team->was_names = $this->service->was($team->id, $request->event_id);
+            $team->mega_buhgolc = $teams->filter(function($value) use ($team) {
+                return $team->was_names->contains($value->name);
+            })->reduce(function($mega_buhgolc, $value) {
+                return $mega_buhgolc + $value->buhgolc;
+            });
         }
         return $teams;
     }
@@ -41,9 +47,9 @@ class TeamController extends Controller
     {
         //
         $team = $this->service->store($request->name);
-        $group = Group::find($request->group_id);
-        if (!$group->teams->contains($team)) {
-            $group->teams()->attach($team->id);
+        $event = Event::find($request->event_id);
+        if (!$event->teams->contains($team)) {
+            $event->teams()->attach($team->id);
         }
         return $team;
     }
@@ -81,7 +87,7 @@ class TeamController extends Controller
     {
         //
         $ids = explode(',', $id);
-        $group = Group::find($ids[0]);
-        $group->teams()->detach($ids[1]);
+        $event = Event::find($ids[0]);
+        $event->teams()->detach($ids[1]);
     }
 }
