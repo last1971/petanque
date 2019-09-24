@@ -73,8 +73,8 @@ class ResultController extends Controller
                 'teams' => $teams->sortByMulti([
                     'winner' => 'DESC',
                     'buhgolc' => 'DESC',
-   //                 'mega_buhgolc' => 'DESC',
-  //                  'points' => 'DESC'
+                    'mega_buhgolc' => 'DESC',
+                    'points' => 'DESC'
                 ])->values()
             ]
         );
