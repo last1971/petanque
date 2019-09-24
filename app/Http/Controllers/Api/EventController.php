@@ -7,6 +7,7 @@ use App\Services\EventService;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 
 class EventController extends Controller
 {
@@ -67,6 +68,10 @@ class EventController extends Controller
     public function update(Request $request, $id)
     {
         //
+        $key = uniqid();
+        Cache::add($key, $id, 120);
+        $ret = Cache::get($key);
+        return $key;
     }
 
     /**

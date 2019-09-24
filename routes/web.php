@@ -30,3 +30,5 @@ Route::get('/group/{id}', function () {
 Route::get('/round/{id}', function () {
     return view('home');
 });
+
+Route::get('/result/{guid}', 'ResultController@show');

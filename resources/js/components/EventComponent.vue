@@ -91,6 +91,7 @@
                         <b-input-group-prepend v-else is-text>
                             <b-checkbox v-model="soperniki" class="pr-2">Соперники</b-checkbox>
                         </b-input-group-prepend>
+                        <b-btn @click="print"><i class="fas fa-print" aria-hidden="true"></i></b-btn>
                     </b-input-group>
                 </div>
             </b-card>
@@ -145,6 +146,13 @@
         },
 
         methods: {
+            print() {
+                axios.put('/api/event/' + this.event.id)
+                    .then(res => {
+                        window.open('/result/' + res.data, '_blank')
+                    })
+            },
+
             update_event(to) {
                 this.$store.dispatch('EVENT/CHECK_CACHE', to.params.id)
                     .then(res => {
