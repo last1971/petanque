@@ -67,9 +67,20 @@ class RoundService
     {
         $event = Event::find($event_id);
         $teams = (new TeamService())->rating($event_id)->get();
-        $teams->each(function($value) use ($event_id) {
+        $teams->each(function($value) use ($event_id, $teams) {
             $value->old_pairs = $this->was($value->id, $event_id);
+            $value->mega_buhgolc = $teams->filter(function($val) use ($value) {
+                return $value->old_pairs->contains($val->id);
+            })->reduce(function($mega_buhgolc, $val) {
+                return $mega_buhgolc + $val->buhgolc;
+            });
         });
+        $teams = $teams->sortByMulti([
+            'winner' => 'DESC',
+            'buhgolc' => 'DESC',
+            'mega_buhgolc' => 'DESC',
+            'points' => 'DESC'
+        ])->values();
         $wins = $teams[0]->winner;
         $pools = collect();
         $add = null;
@@ -98,6 +109,11 @@ class RoundService
         $add = true;
         while ($index < $pools->count()) {
             $pool = $pools->get($index);
+            /*
+            $t = $pool->teams->pluck('name');
+            $s1 = $pool->sub1->pluck('name');
+            $s2 = $pool->sub2_get()->pluck('name');
+            */
             $add = $add ? $pool->pre_pairing() : $pool->next_variant();
             if (!$add) {
                 if ($add === null) {

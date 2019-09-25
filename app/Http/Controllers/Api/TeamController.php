@@ -34,7 +34,14 @@ class TeamController extends Controller
                 return $mega_buhgolc + $value->buhgolc;
             });
         }
-        return $teams;
+        return response()->json([
+            'data' => $teams->sortByMulti([
+                'winner' => 'DESC',
+                'buhgolc' => 'DESC',
+                'mega_buhgolc' => 'DESC',
+                'points' => 'DESC'
+            ])->values()
+        ]);
     }
 
     /**

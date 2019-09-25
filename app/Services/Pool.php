@@ -23,7 +23,7 @@ class Pool
     /**
      * @var Collection
      */
-    protected $sub1;
+    public $sub1;
     /**
      * @var Collection
      */
