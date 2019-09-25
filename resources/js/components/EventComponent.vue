@@ -39,13 +39,13 @@
                                 Бух.
                             </th>
                             <th scope="col">
-                                Разн.
-                            </th>
-                            <th scope="col">
                                 М.Бух.
                             </th>
                             <th scope="col">
-                                Ран.
+                                Разн.
+                            </th>
+                            <th scope="col">
+                                Ранг
                             </th>
                         </thead>
                         <tbody>
@@ -72,8 +72,8 @@
                                     </span>
                                 </td>
                                 <td> {{ value.buhgolc }}</td>
-                                <td> {{ value.points }}</td>
                                 <td> {{ value.mega_buhgolc }}</td>
+                                <td> {{ value.points }}</td>
                                 <td> {{ value.rank }}</td>
                             </tr>
                         </tbody>

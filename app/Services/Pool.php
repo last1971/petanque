@@ -162,10 +162,15 @@ class Pool
                 return $key >= $half;
             })->values();
         } else {
-            $this->sub1 = $this->additional_teams;
-            $this->sub2 = $this->teams;
+            $this->sub1 = $this->additional_teams->values();
+            $this->sub2 = $this->teams->values();
         }
         $this->sub2_keys = $this->sub2->keys();
+        $this->max_exch = 1;
+        $this->next_exch = 0;
+        $this->min_exch = 0;
+        $this->other_exch = 0;
+        $this->flag_exch = true;
     }
 
     /**

@@ -55,7 +55,7 @@ class MegaTest extends Command
                 );
                 $event->teams()->attach($team->id);
             }
-            for ($i = 0; $i < 5; $i++) {
+            for ($i = 0; $i < 7; $i++) {
                 $round = (new RoundService())->create($event->id);
                 foreach ($round->games as $game) {
                     $game->load('members');

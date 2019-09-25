@@ -109,24 +109,47 @@ class RoundService
         $add = true;
         while ($index < $pools->count()) {
             $pool = $pools->get($index);
-            /*
+            //
             $t = $pool->teams->pluck('name');
             $s1 = $pool->sub1->pluck('name');
             $s2 = $pool->sub2_get()->pluck('name');
-            */
+            //
             $add = $add ? $pool->pre_pairing() : $pool->next_variant();
             if (!$add) {
                 if ($add === null) {
                     $index--;
+                    if ($index< 0) {
+                        $index = 0;
+                        $add = $pool->teams;
+                        $pools->shift();
+                        $pools->get($index)->set_additional_teams($add);
+                    }
                 }
             } else {
+                //
+                $t = $pool->teams->pluck('name');
+                $s1 = $pool->sub1->pluck('name');
+                $s2 = $pool->sub2_get()->pluck('name');
+                //
                 if ($add->count() == 1) {
                     if ($index == $pools->count() - 1) {
                         if (!$add->first()->old_pairs->contains(null)) {
-                            $pools->push(new Pool($add, 0));
-                            $index = $index + 2;
+                            if ($add != $pool->teams) {
+                                $pools->push(new Pool($add, 0));
+                                $index = $index + 2;
+                            } else {
+                                $index++;
+                            }
                         } else {
-                            $add = false;
+                            if ($add != $pool->teams) {
+                                $add = false;
+                            } else {
+                                $pools->pop();
+                                $index--;
+                                $new_teams = $pools[$index]->teams->merge($add);
+                                $pools->pop();
+                                $pools->push(new Pool($new_teams, $add[0]->winner));
+                            }
                         }
                     } else {
                         $index++;
