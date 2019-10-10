@@ -32,3 +32,4 @@ Route::get('/round/{id}', function () {
 });
 
 Route::get('/result/{guid}', 'ResultController@show');
+Route::get('/result/download/{id}', 'ResultController@print');

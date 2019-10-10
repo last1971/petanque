@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Event;
+use App\Exports\ResultExport;
 use App\Services\TeamService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
@@ -36,5 +38,13 @@ class ResultController extends Controller
                 ])->values()
             ]
         );
+    }
+
+    public function print($id)
+    {
+        $e = new ResultExport($id);
+        $event = Event::find($id);
+        $name = str_replace(' ','_', iconv('utf-8', "ISO-8859-1//TRANSLIT", $event->name) ) . '.xlsx';
+        return $e->download($name);
     }
 }

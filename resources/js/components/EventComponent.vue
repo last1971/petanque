@@ -92,6 +92,7 @@
                             <b-checkbox v-model="soperniki" class="pr-2">Соперники</b-checkbox>
                         </b-input-group-prepend>
                         <b-btn @click="print"><i class="fas fa-print" aria-hidden="true"></i></b-btn>
+                        <b-btn @click="download"><i class="fas fa-download" aria-hidden="true"></i></b-btn>
                     </b-input-group>
                 </div>
             </b-card>
@@ -151,6 +152,10 @@
                     .then(res => {
                         window.open('/result/' + res.data, '_blank')
                     })
+            },
+
+            download() {
+                window.open('/result/download/' + this.event.id)
             },
 
             update_event(to) {

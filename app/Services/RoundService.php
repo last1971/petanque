@@ -110,9 +110,10 @@ class RoundService
         while ($index < $pools->count()) {
             $pool = $pools->get($index);
             //
-            $t = $pool->teams->pluck('name');
-            $s1 = $pool->sub1->pluck('name');
-            $s2 = $pool->sub2_get()->pluck('name');
+            $t = $pool->teams->pluck('name')->toArray();
+            $ta = $pool->additional_teams->pluck('name')->toArray();
+            $s1 = $pool->sub1->pluck('name')->toArray();
+            $s2 = $pool->sub2_get()->pluck('name')->toArray();
             //
             $add = $add ? $pool->pre_pairing() : $pool->next_variant();
             if (!$add) {
@@ -120,16 +121,25 @@ class RoundService
                     $index--;
                     if ($index< 0) {
                         $index = 0;
-                        $add = $pool->teams;
-                        $pools->shift();
+                        //
+                        $t = $pool->teams->pluck('name')->toArray();
+                        $ta = $pool->additional_teams->pluck('name')->toArray();
+                        $s1 = $pool->sub1->pluck('name')->toArray();
+                        $s2 = $pool->sub2_get()->pluck('name')->toArray();
+                        //
+                        $add = $pool->additional_teams->merge($pool->teams);
+                        do {
+                            $pools->shift();
+                        } while ($add->intersect($pools->get($index)->teams)->count() > 0);
                         $pools->get($index)->set_additional_teams($add);
                     }
                 }
             } else {
                 //
-                $t = $pool->teams->pluck('name');
-                $s1 = $pool->sub1->pluck('name');
-                $s2 = $pool->sub2_get()->pluck('name');
+                $t = $pool->teams->pluck('name')->toArray();
+                $ta = $pool->additional_teams->pluck('name')->toArray();
+                $s1 = $pool->sub1->pluck('name')->toArray();
+                $s2 = $pool->sub2_get()->pluck('name')->toArray();
                 //
                 if ($add->count() == 1) {
                     if ($index == $pools->count() - 1) {
