@@ -21,8 +21,8 @@ Route::middleware('auth:api')->group(function(){
     Route::apiResources(
         [
             'event' =>  'Api\EventController',
-            'group' =>  'Api\GroupController',
-            'track' =>  'Api\TrackController',
+            //'group' =>  'Api\GroupController',
+            //'track' =>  'Api\TrackController',
             'team' =>   'Api\TeamController',
             'round' =>  'Api\RoundController',
             'game' =>   'Api\GameController',
